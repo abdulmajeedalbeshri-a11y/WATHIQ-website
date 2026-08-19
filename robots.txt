@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://abdulmajeedalbeshri-a11y.github.io/botly-website/sitemap.xml
+
+# Block sensitive pages from indexing
+Disallow: /botly-auth.html
+Disallow: /admin/
