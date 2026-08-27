@@ -1,8 +1,8 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://abdulmajeedalbeshri-a11y.github.io/botly-website/sitemap.xml
+Sitemap: https://abdulmajeedalbeshri-a11y.github.io/wathiq-website/sitemap.xml
 
 # Block sensitive pages from indexing
-Disallow: /botly-auth.html
+Disallow: /wathiq-auth.html
 Disallow: /admin/

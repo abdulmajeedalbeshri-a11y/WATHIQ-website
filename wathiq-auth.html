@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WATHIQ — تسجيل الدخول</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+  --ink:      #0B0F1A;
+  --ink-2:    #1A2035;
+  --gold:     #E8A838;
+  --gold-dim: #C4892A;
+  --gold-glow:#F5C96A;
+  --teal:     #1EC8C8;
+  --white:    #F5F7FF;
+  --muted:    #8A95B0;
+  --card:     #141829;
+  --error:    #FF5A5A;
+  --success:  #2ECC71;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Cairo', sans-serif;
+  background: var(--ink);
+  color: var(--white);
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  direction: rtl; position: relative; overflow: hidden;
+}
+body::before {
+  content: ''; position: fixed; top: -200px; right: -200px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(232,168,56,0.1) 0%, transparent 65%);
+  pointer-events: none;
+}
+body::after {
+  content: ''; position: fixed; bottom: -200px; left: -200px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(30,200,200,0.08) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.wrapper { width: 100%; max-width: 460px; padding: 24px; position: relative; z-index: 1; }
+
+/* Logo */
+.logo-area { text-align: center; margin-bottom: 28px; }
+.logo-area svg { height: 48px; width: auto; }
+
+/* Role tabs */
+.role-tabs {
+  display: flex; background: var(--card);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 50px; padding: 5px; margin-bottom: 24px; gap: 4px;
+}
+.role-tab {
+  flex: 1; padding: 10px 16px; border-radius: 50px; border: none;
+  background: transparent; color: var(--muted);
+  font-family: 'Cairo', sans-serif; font-size: 0.88rem; font-weight: 600;
+  cursor: pointer; transition: all .25s; display: flex; align-items: center;
+  justify-content: center; gap: 6px;
+}
+.role-tab.active-client { background: linear-gradient(135deg, var(--gold-dim), var(--gold)); color: var(--ink); box-shadow: 0 4px 16px rgba(232,168,56,.28); }
+.role-tab.active-admin  { background: linear-gradient(135deg, #0A8F8F, var(--teal)); color: var(--ink); box-shadow: 0 4px 16px rgba(30,200,200,.28); }
+
+/* Mode tabs (login / register) */
+.mode-tabs {
+  display: flex; gap: 0; margin-bottom: 24px;
+  border-bottom: 2px solid rgba(255,255,255,0.08);
+}
+.mode-tab {
+  flex: 1; padding: 10px; background: transparent; border: none;
+  color: var(--muted); font-family: 'Cairo', sans-serif; font-size: 0.88rem;
+  font-weight: 700; cursor: pointer; transition: all .25s;
+  border-bottom: 2px solid transparent; margin-bottom: -2px;
+}
+.mode-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+.mode-tab.active.admin-color { color: var(--teal); border-bottom-color: var(--teal); }
+
+/* Card */
+.card {
+  background: var(--card); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px; padding: 32px 28px;
+  box-shadow: 0 24px 60px rgba(0,0,0,.4);
+}
+.card.admin-border { border-color: rgba(30,200,200,0.2); }
+
+.admin-badge {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(30,200,200,0.07); border: 1px solid rgba(30,200,200,0.2);
+  border-radius: 8px; padding: 8px 14px; font-size: 0.8rem; color: var(--teal);
+  margin-bottom: 18px;
+}
+
+/* Form */
+.form-group { margin-bottom: 16px; }
+label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--muted); margin-bottom: 7px; letter-spacing: .4px; }
+.input-wrap { position: relative; }
+.input-icon { position: absolute; right: 13px; top: 50%; transform: translateY(-50%); font-size: 0.95rem; pointer-events: none; }
+input[type=text], input[type=email], input[type=password], input[type=tel] {
+  width: 100%; background: rgba(255,255,255,0.04);
+  border: 1.5px solid rgba(255,255,255,0.1); border-radius: 12px;
+  padding: 12px 42px 12px 14px; color: var(--white);
+  font-family: 'Cairo', sans-serif; font-size: 0.92rem; outline: none;
+  transition: border-color .2s, background .2s; direction: rtl;
+}
+input:focus { border-color: var(--gold); background: rgba(232,168,56,0.04); }
+.admin-mode input:focus { border-color: var(--teal); background: rgba(30,200,200,0.04); }
+input::placeholder { color: rgba(138,149,176,0.45); }
+.pass-toggle {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.95rem; padding: 0;
+}
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.form-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 20px; font-size: 0.8rem;
+}
+.remember { display: flex; align-items: center; gap: 7px; color: var(--muted); cursor: pointer; }
+.remember input { width: 15px; height: 15px; accent-color: var(--gold); cursor: pointer; padding: 0; background: none; border: none; }
+.forgot { color: var(--gold); text-decoration: none; font-weight: 600; }
+.forgot:hover { opacity: .75; }
+
+/* Buttons */
+.btn-submit {
+  width: 100%; padding: 13px; border: none; border-radius: 12px;
+  background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+  color: var(--ink); font-family: 'Cairo', sans-serif; font-size: 0.97rem;
+  font-weight: 700; cursor: pointer; transition: all .25s;
+  box-shadow: 0 6px 20px rgba(232,168,56,.28);
+}
+.btn-submit.admin-btn { background: linear-gradient(135deg, #0A8F8F, var(--teal)); box-shadow: 0 6px 20px rgba(30,200,200,.28); }
+.btn-submit:hover { transform: translateY(-2px); filter: brightness(1.08); }
+.btn-submit:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+.divider { display: flex; align-items: center; gap: 10px; margin: 16px 0; font-size: 0.75rem; color: var(--muted); }
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.08); }
+
+.btn-telegram {
+  width: 100%; padding: 11px; border: 1.5px solid rgba(30,200,200,0.25);
+  border-radius: 12px; background: rgba(30,200,200,0.06); color: var(--teal);
+  font-family: 'Cairo', sans-serif; font-size: 0.88rem; font-weight: 600;
+  cursor: pointer; transition: all .25s; display: flex; align-items: center;
+  justify-content: center; gap: 8px; text-decoration: none;
+}
+.btn-telegram:hover { background: rgba(30,200,200,0.13); border-color: var(--teal); }
+
+/* Alerts */
+.alert {
+  padding: 11px 14px; border-radius: 10px; font-size: 0.83rem;
+  margin-bottom: 14px; display: none; align-items: center; gap: 8px; line-height: 1.5;
+}
+.alert.show { display: flex; }
+.alert.error   { background: rgba(255,90,90,0.1); border: 1px solid rgba(255,90,90,0.3); color: #FF8A8A; }
+.alert.success { background: rgba(46,204,113,0.1); border: 1px solid rgba(46,204,113,0.3); color: #5DECA0; }
+.alert.info    { background: rgba(232,168,56,0.1); border: 1px solid rgba(232,168,56,0.25); color: var(--gold); }
+
+/* Password strength */
+.strength-bar { display: flex; gap: 4px; margin-top: 7px; }
+.strength-seg { flex: 1; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; transition: background .3s; }
+.strength-seg.weak   { background: #FF5A5A; }
+.strength-seg.fair   { background: var(--gold); }
+.strength-seg.strong { background: var(--success); }
+.strength-label { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+
+/* Terms */
+.terms-check {
+  display: flex; align-items: flex-start; gap: 9px; font-size: 0.8rem;
+  color: var(--muted); margin-bottom: 16px; cursor: pointer; line-height: 1.5;
+}
+.terms-check input { width: 15px; height: 15px; accent-color: var(--gold); cursor: pointer; flex-shrink: 0; margin-top: 2px; padding: 0; background: none; border: none; }
+.terms-check a { color: var(--gold); text-decoration: none; }
+
+/* Dashboard preview (after login) */
+.dashboard {
+  display: none; text-align: center;
+}
+.dashboard.show { display: block; }
+.dash-welcome { font-size: 1.3rem; font-weight: 900; margin-bottom: 8px; }
+.dash-welcome span { color: var(--gold); }
+.dash-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+.dash-card {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px; padding: 16px; text-align: center;
+}
+.dash-card-num { font-size: 1.8rem; font-weight: 900; color: var(--gold); display: block; }
+.dash-card-label { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+.btn-logout {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 24px; border-radius: 50px;
+  border: 1.5px solid rgba(255,90,90,0.3); background: rgba(255,90,90,0.07);
+  color: #FF8A8A; font-family: 'Cairo', sans-serif; font-size: 0.88rem;
+  font-weight: 600; cursor: pointer; transition: all .2s; margin-top: 8px;
+}
+.btn-logout:hover { background: rgba(255,90,90,0.14); border-color: rgba(255,90,90,0.5); }
+
+/* Forgot password view */
+.forgot-view { display: none; }
+.forgot-view.show { display: block; }
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px; background: none; border: none;
+  color: var(--muted); font-family: 'Cairo', sans-serif; font-size: 0.85rem;
+  cursor: pointer; margin-bottom: 16px; padding: 0; transition: color .2s;
+}
+.back-btn:hover { color: var(--gold); }
+
+/* Back to site */
+.back-site { text-align: center; margin-top: 20px; font-size: 0.8rem; }
+.back-site a { color: var(--muted); text-decoration: none; transition: color .2s; }
+.back-site a:hover { color: var(--white); }
+
+/* Particles */
+.p { position: fixed; border-radius: 50%; pointer-events: none; animation: floatUp linear infinite; opacity: 0; }
+@keyframes floatUp { 0%{transform:translateY(110vh);opacity:0} 8%{opacity:.14} 92%{opacity:.1} 100%{transform:translateY(-10vh);opacity:0} }
+
+@media (max-width: 480px) {
+  .wrapper { padding: 16px; }
+  .card { padding: 24px 18px; }
+  .form-row { grid-template-columns: 1fr; }
+}
+.logo-svg{height:52px;width:auto;display:block}
+</style>
+</head>
+<body>
+
+<!-- Particles -->
+<div class="p" style="width:6px;height:6px;background:#E8A838;left:12%;animation-duration:13s;animation-delay:0s"></div>
+<div class="p" style="width:4px;height:4px;background:#1EC8C8;left:72%;animation-duration:16s;animation-delay:2s"></div>
+<div class="p" style="width:7px;height:7px;background:#E8A838;left:38%;animation-duration:19s;animation-delay:6s"></div>
+<div class="p" style="width:5px;height:5px;background:#1EC8C8;left:58%;animation-duration:12s;animation-delay:1s"></div>
+<div class="p" style="width:3px;height:3px;background:#F5C96A;left:88%;animation-duration:15s;animation-delay:4s"></div>
+
+<div class="wrapper">
+
+  <!-- Logo -->
+  <div class="logo-area">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 60">
+      <defs>
+        <linearGradient id="lg1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#F5C96A"/>
+          <stop offset="100%" style="stop-color:#C4892A"/>
+        </linearGradient>
+        <linearGradient id="lg2" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#1EC8C8"/>
+          <stop offset="100%" style="stop-color:#0A8F8F"/>
+        </linearGradient>
+      </defs>
+      <rect x="4" y="8" width="44" height="36" rx="10" fill="url(#lg1)"/>
+      <circle cx="16" cy="23" r="4" fill="#0B0F1A"/>
+      <circle cx="36" cy="23" r="4" fill="#0B0F1A"/>
+      <circle cx="17.5" cy="21.5" r="1.5" fill="#1EC8C8"/>
+      <circle cx="37.5" cy="21.5" r="1.5" fill="#1EC8C8"/>
+      <rect x="14" y="31" width="24" height="4" rx="2" fill="#0B0F1A" opacity="0.6"/>
+      <line x1="26" y1="8" x2="26" y2="2" stroke="#E8A838" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="26" cy="1" r="2.5" fill="url(#lg2)"/>
+      <polygon points="18,44 10,52 28,44" fill="url(#lg1)"/>
+      <text x="58" y="38" font-family="Cairo,Arial,sans-serif" font-weight="900" font-size="28" fill="url(#lg1)" letter-spacing="-0.5">Bot</text>
+      <text x="107" y="38" font-family="Cairo,Arial,sans-serif" font-weight="900" font-size="28" fill="url(#lg2)" letter-spacing="-0.5">ly</text>
+      <text x="59" y="52" font-family="Cairo,Arial,sans-serif" font-size="9" fill="#8A95B0" letter-spacing="1">SMART BOTS · TRUSTED RESULTS</text>
+    </svg>
+  </div>
+
+  <!-- ══ DASHBOARD (after login) ══ -->
+  <div class="dashboard" id="dashboard">
+    <div class="card">
+      <div class="dash-welcome">أهلاً، <span id="dashName">—</span> 👋</div>
+      <p style="color:var(--muted);font-size:.85rem;margin-bottom:4px" id="dashEmail"></p>
+      <p id="dashRole" style="font-size:.78rem;margin-bottom:16px"></p>
+      <div class="dash-cards">
+        <div class="dash-card"><span class="dash-card-num">0</span><div class="dash-card-label">طلباتي</div></div>
+        <div class="dash-card"><span class="dash-card-num">—</span><div class="dash-card-label">حالة البوت</div></div>
+        <div class="dash-card"><span class="dash-card-num">0</span><div class="dash-card-label">رسائل اليوم</div></div>
+        <div class="dash-card"><span class="dash-card-num" style="color:var(--teal)">✓</span><div class="dash-card-label">الحساب مفعّل</div></div>
+      </div>
+      <a href="wathiq-website-v3.html" class="btn-telegram" style="margin-bottom:12px">← العودة للموقع</a>
+      <br>
+      <button class="btn-logout" onclick="handleLogout()">🚪 تسجيل الخروج</button>
+    </div>
+  </div>
+
+  <!-- ══ AUTH FORMS ══ -->
+  <div id="authSection">
+
+    <!-- Role Tabs -->
+    <div class="role-tabs">
+      <button class="role-tab active-client" id="clientTab" onclick="setRole('client')">👤 العملاء</button>
+      <button class="role-tab" id="adminTab"  onclick="setRole('admin')">⚙️ الإدارة</button>
+    </div>
+
+    <!-- Mode Tabs -->
+    <div class="mode-tabs" id="modeTabs">
+      <button class="mode-tab active" id="loginTab"    onclick="setMode('login')">تسجيل الدخول</button>
+      <button class="mode-tab" id="registerTab" onclick="setMode('register')">إنشاء حساب</button>
+    </div>
+
+    <!-- Card -->
+    <div class="card" id="mainCard">
+
+      <div class="admin-badge" id="adminBadge" style="display:none">
+        🔐 وصول مخصص للفريق الداخلي فقط
+      </div>
+
+      <div class="alert" id="alertBox"></div>
+
+      <!-- ── LOGIN FORM ── -->
+      <div id="loginForm">
+        <div class="form-group">
+          <label>البريد الإلكتروني</label>
+          <div class="input-wrap">
+            <span class="input-icon">📧</span>
+            <input type="email" id="loginEmail" placeholder="example@email.com" autocomplete="email">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>كلمة المرور</label>
+          <div class="input-wrap">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
+            <button class="pass-toggle" onclick="togglePass('loginPass')" type="button">👁</button>
+          </div>
+        </div>
+        <div class="form-footer">
+          <label class="remember">
+            <input type="checkbox" id="rememberMe"> تذكّرني
+          </label>
+          <a href="#" class="forgot" onclick="setView('forgot'); return false">نسيت كلمة المرور؟</a>
+        </div>
+        <button class="btn-submit" id="loginBtn" onclick="handleLogin()">
+          دخول ←
+        </button>
+        <div class="divider">أو</div>
+        <a href="https://t.me/wathiqapp_bot" class="btn-telegram">✈️ المتابعة عبر Telegram</a>
+      </div>
+
+      <!-- ── REGISTER FORM ── -->
+      <div id="registerForm" style="display:none">
+        <div class="form-row">
+          <div class="form-group">
+            <label>الاسم الأول</label>
+            <div class="input-wrap">
+              <span class="input-icon">👤</span>
+              <input type="text" id="regFirst" placeholder="محمد">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>اسم العائلة</label>
+            <div class="input-wrap">
+              <span class="input-icon">👤</span>
+              <input type="text" id="regLast" placeholder="العتيبي">
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>البريد الإلكتروني</label>
+          <div class="input-wrap">
+            <span class="input-icon">📧</span>
+            <input type="email" id="regEmail" placeholder="example@email.com" autocomplete="email">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>رقم الجوال (اختياري)</label>
+          <div class="input-wrap">
+            <span class="input-icon">📱</span>
+            <input type="tel" id="regPhone" placeholder="+966 5X XXX XXXX">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>كلمة المرور</label>
+          <div class="input-wrap">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="regPass" placeholder="8 أحرف على الأقل" oninput="checkStrength()" autocomplete="new-password">
+            <button class="pass-toggle" onclick="togglePass('regPass')" type="button">👁</button>
+          </div>
+          <div class="strength-bar" id="strengthBar">
+            <div class="strength-seg" id="s1"></div>
+            <div class="strength-seg" id="s2"></div>
+            <div class="strength-seg" id="s3"></div>
+            <div class="strength-seg" id="s4"></div>
+          </div>
+          <div class="strength-label" id="strengthLabel"></div>
+        </div>
+        <div class="form-group">
+          <label>تأكيد كلمة المرور</label>
+          <div class="input-wrap">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="regPassConfirm" placeholder="••••••••" autocomplete="new-password">
+          </div>
+        </div>
+        <label class="terms-check">
+          <input type="checkbox" id="termsCheck">
+          أوافق على <a href="#" onclick="return false">شروط الاستخدام</a> و<a href="#" onclick="return false">سياسة الخصوصية</a>
+        </label>
+        <button class="btn-submit" id="registerBtn" onclick="handleRegister()">
+          إنشاء الحساب ←
+        </button>
+      </div>
+
+      <!-- ── FORGOT PASSWORD ── -->
+      <div class="forgot-view" id="forgotView">
+        <button class="back-btn" onclick="setView('login')">← رجوع</button>
+        <div class="form-group">
+          <label>البريد الإلكتروني المسجّل</label>
+          <div class="input-wrap">
+            <span class="input-icon">📧</span>
+            <input type="email" id="forgotEmail" placeholder="example@email.com">
+          </div>
+        </div>
+        <button class="btn-submit" id="forgotBtn" onclick="handleForgot()">
+          إرسال رابط الاستعادة ←
+        </button>
+      </div>
+
+    </div><!-- /card -->
+
+  </div><!-- /authSection -->
+
+  <div class="back-site" id="backSite">
+    <a href="wathiq-website-v3.html">← العودة للموقع الرئيسي</a>
+  </div>
+
+</div><!-- /wrapper -->
+
+<script>
+// ══════════════════════════════════════
+//  SUPABASE CONFIG
+//  ضع هنا بيانات مشروعك من Supabase Dashboard
+// ══════════════════════════════════════
+const SUPABASE_URL = 'https://iiprbqfeqhcfetdyqsla.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_T6_wMeobe30cz1aKhrv05A_J6cgy1Ck';
+
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ══════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════
+let currentRole = 'client'; // 'client' | 'admin'
+let currentMode = 'login';  // 'login' | 'register'
+let currentView = 'login';  // 'login' | 'forgot'
+
+// Admin emails — عدّل هذه القائمة
+const ADMIN_EMAILS = ['admin@wathiq.sa', 'abdulmajeed@wathiq.sa'];
+
+// ══════════════════════════════════════
+//  INIT — check session on load
+// ══════════════════════════════════════
+window.addEventListener('DOMContentLoaded', async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) showDashboard(session.user);
+});
+
+// ══════════════════════════════════════
+//  ROLE SWITCH
+// ══════════════════════════════════════
+function setRole(role) {
+  currentRole = role;
+  clearAlert();
+  const adminBadge = document.getElementById('adminBadge');
+  const clientTab  = document.getElementById('clientTab');
+  const adminTab   = document.getElementById('adminTab');
+  const card       = document.getElementById('mainCard');
+  const loginBtn   = document.getElementById('loginBtn');
+  const regBtn     = document.getElementById('registerBtn');
+  const modeTabs   = document.getElementById('modeTabs');
+
+  if (role === 'admin') {
+    clientTab.className = 'role-tab';
+    adminTab.className  = 'role-tab active-admin';
+    card.classList.add('admin-border');
+    adminBadge.style.display = 'flex';
+    document.querySelectorAll('.mode-tab.active').forEach(t => t.classList.add('admin-color'));
+    if (loginBtn) loginBtn.classList.add('admin-btn');
+    if (regBtn)   regBtn.classList.add('admin-btn');
+    // Hide register tab for admin
+    document.getElementById('registerTab').style.display = 'none';
+    if (currentMode === 'register') setMode('login');
+  } else {
+    clientTab.className = 'role-tab active-client';
+    adminTab.className  = 'role-tab';
+    card.classList.remove('admin-border');
+    adminBadge.style.display = 'none';
+    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('admin-color'));
+    if (loginBtn) loginBtn.classList.remove('admin-btn');
+    if (regBtn)   regBtn.classList.remove('admin-btn');
+    document.getElementById('registerTab').style.display = '';
+  }
+}
+
+// ══════════════════════════════════════
+//  MODE SWITCH (login / register)
+// ══════════════════════════════════════
+function setMode(mode) {
+  currentMode = mode;
+  clearAlert();
+  document.getElementById('loginForm').style.display    = mode === 'login'    ? 'block' : 'none';
+  document.getElementById('registerForm').style.display = mode === 'register' ? 'block' : 'none';
+  document.getElementById('forgotView').classList.remove('show');
+  document.getElementById('loginTab').classList.toggle('active',    mode === 'login');
+  document.getElementById('registerTab').classList.toggle('active', mode === 'register');
+  if (currentRole === 'admin') {
+    document.querySelectorAll('.mode-tab.active').forEach(t => t.classList.add('admin-color'));
+  }
+}
+
+// ══════════════════════════════════════
+//  VIEW SWITCH (login / forgot)
+// ══════════════════════════════════════
+function setView(view) {
+  currentView = view;
+  clearAlert();
+  document.getElementById('loginForm').style.display   = view === 'login'  ? 'block' : 'none';
+  document.getElementById('forgotView').classList.toggle('show', view === 'forgot');
+  document.getElementById('modeTabs').style.display    = view === 'forgot' ? 'none' : '';
+}
+
+// ══════════════════════════════════════
+//  LOGIN
+// ══════════════════════════════════════
+async function handleLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPass').value;
+  const btn   = document.getElementById('loginBtn');
+
+  clearAlert();
+  if (!email) return showAlert('يرجى إدخال البريد الإلكتروني', 'error');
+  if (!pass)  return showAlert('يرجى إدخال كلمة المرور', 'error');
+
+  // Admin check
+  if (currentRole === 'admin' && !ADMIN_EMAILS.includes(email.toLowerCase())) {
+    return showAlert('هذا البريد غير مصرح له بدخول لوحة الإدارة', 'error');
+  }
+
+  setLoading(btn, true, 'جارٍ التحقق...');
+
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+
+  setLoading(btn, false, currentRole === 'admin' ? 'دخول الإدارة ←' : 'دخول ←');
+
+  if (error) {
+    const msg = error.message.includes('Invalid') ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة'
+               : error.message.includes('Email not confirmed') ? 'يرجى تأكيد بريدك الإلكتروني أولاً'
+               : 'حدث خطأ: ' + error.message;
+    return showAlert(msg, 'error');
+  }
+
+  showAlert('تم تسجيل الدخول بنجاح ✅', 'success');
+  setTimeout(() => showDashboard(data.user), 800);
+}
+
+// ══════════════════════════════════════
+//  REGISTER
+// ══════════════════════════════════════
+async function handleRegister() {
+  const first   = document.getElementById('regFirst').value.trim();
+  const last    = document.getElementById('regLast').value.trim();
+  const email   = document.getElementById('regEmail').value.trim();
+  const phone   = document.getElementById('regPhone').value.trim();
+  const pass    = document.getElementById('regPass').value;
+  const confirm = document.getElementById('regPassConfirm').value;
+  const terms   = document.getElementById('termsCheck').checked;
+  const btn     = document.getElementById('registerBtn');
+
+  clearAlert();
+  if (!first || !last) return showAlert('يرجى إدخال الاسم كاملاً', 'error');
+  if (!email)           return showAlert('يرجى إدخال البريد الإلكتروني', 'error');
+  if (!pass)            return showAlert('يرجى إدخال كلمة المرور', 'error');
+  if (pass.length < 8)  return showAlert('كلمة المرور يجب أن تكون 8 أحرف على الأقل', 'error');
+  if (pass !== confirm) return showAlert('كلمتا المرور غير متطابقتين', 'error');
+  if (!terms)           return showAlert('يجب الموافقة على شروط الاستخدام', 'error');
+
+  setLoading(btn, true, 'جارٍ إنشاء الحساب...');
+
+  const { data, error } = await sb.auth.signUp({
+    email,
+    password: pass,
+    options: {
+      data: {
+        first_name: first,
+        last_name:  last,
+        full_name:  `${first} ${last}`,
+        phone:      phone,
+        role:       'client',
+      }
+    }
+  });
+
+  setLoading(btn, false, 'إنشاء الحساب ←');
+
+  if (error) {
+    const msg = error.message.includes('already registered') ? 'هذا البريد مسجّل مسبقاً، يرجى تسجيل الدخول'
+               : 'حدث خطأ: ' + error.message;
+    return showAlert(msg, 'error');
+  }
+
+  if (data.user && !data.session) {
+    // Email confirmation required
+    showAlert('✅ تم إرسال رابط التأكيد إلى بريدك الإلكتروني. يرجى التحقق منه للمتابعة.', 'success');
+  } else if (data.session) {
+    showAlert('تم إنشاء حسابك بنجاح! 🎉', 'success');
+    setTimeout(() => showDashboard(data.user), 800);
+  }
+}
+
+// ══════════════════════════════════════
+//  FORGOT PASSWORD
+// ══════════════════════════════════════
+async function handleForgot() {
+  const email = document.getElementById('forgotEmail').value.trim();
+  const btn   = document.getElementById('forgotBtn');
+
+  clearAlert();
+  if (!email) return showAlert('يرجى إدخال البريد الإلكتروني', 'error');
+
+  setLoading(btn, true, 'جارٍ الإرسال...');
+
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + '/wathiq-auth.html'
+  });
+
+  setLoading(btn, false, 'إرسال رابط الاستعادة ←');
+
+  if (error) return showAlert('حدث خطأ: ' + error.message, 'error');
+  showAlert('✅ تم إرسال رابط استعادة كلمة المرور إلى بريدك. تحقق من صندوق الوارد.', 'success');
+}
+
+// ══════════════════════════════════════
+//  LOGOUT
+// ══════════════════════════════════════
+async function handleLogout() {
+  await sb.auth.signOut();
+  document.getElementById('dashboard').classList.remove('show');
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('authSection').style.display = 'block';
+  document.getElementById('backSite').style.display = 'block';
+  setMode('login');
+}
+
+// ══════════════════════════════════════
+//  SHOW DASHBOARD
+// ══════════════════════════════════════
+function showDashboard(user) {
+  const meta     = user.user_metadata || {};
+  const name     = meta.full_name || meta.first_name || user.email.split('@')[0];
+  const isAdmin  = ADMIN_EMAILS.includes(user.email.toLowerCase());
+
+  document.getElementById('dashName').textContent  = name;
+  document.getElementById('dashEmail').textContent = user.email;
+  document.getElementById('dashRole').innerHTML    = isAdmin
+    ? '<span style="color:var(--teal);font-weight:700">⚙️ مدير النظام</span>'
+    : '<span style="color:var(--gold);font-weight:700">👤 عميل</span>';
+
+  document.getElementById('authSection').style.display = 'none';
+  document.getElementById('backSite').style.display    = 'none';
+  document.getElementById('dashboard').style.display   = 'block';
+  document.getElementById('dashboard').classList.add('show');
+}
+
+// ══════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════
+function showAlert(msg, type) {
+  const box = document.getElementById('alertBox');
+  box.textContent = msg;
+  box.className = 'alert show ' + type;
+}
+function clearAlert() {
+  document.getElementById('alertBox').className = 'alert';
+}
+
+function setLoading(btn, loading, text) {
+  btn.disabled     = loading;
+  btn.textContent  = loading ? '⏳ ' + text : text;
+}
+
+function togglePass(id) {
+  const inp = document.getElementById(id);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+function checkStrength() {
+  const pass = document.getElementById('regPass').value;
+  const segs = ['s1','s2','s3','s4'].map(id => document.getElementById(id));
+  const label = document.getElementById('strengthLabel');
+  let score = 0;
+  if (pass.length >= 8)             score++;
+  if (/[A-Z]/.test(pass))          score++;
+  if (/[0-9]/.test(pass))          score++;
+  if (/[^A-Za-z0-9]/.test(pass))   score++;
+
+  segs.forEach((s, i) => {
+    s.className = 'strength-seg' + (i < score ? (score <= 1 ? ' weak' : score <= 2 ? ' fair' : score <= 3 ? ' fair' : ' strong') : '');
+  });
+
+  label.textContent = score === 0 ? '' : score <= 1 ? 'ضعيفة جداً' : score === 2 ? 'مقبولة' : score === 3 ? 'جيدة' : 'قوية جداً ✅';
+  label.style.color = score <= 1 ? '#FF5A5A' : score <= 2 ? 'var(--gold)' : score <= 3 ? 'var(--gold)' : 'var(--success)';
+}
+
+// Enter key
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  if (currentView === 'forgot')         handleForgot();
+  else if (currentMode === 'register')  handleRegister();
+  else                                  handleLogin();
+});
+</script>
+</body>
+</html>
