@@ -247,21 +247,60 @@ input::placeholder { color: rgba(138,149,176,0.45); }
 <!-- NAV -->
 <nav>
   <a href="wathiq-website-v3.html" class="nav-back">← العودة للموقع</a>
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 60" height="36">
-    <defs>
-      <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#F5C96A"/><stop offset="100%" style="stop-color:#C4892A"/></linearGradient>
-      <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#1EC8C8"/><stop offset="100%" style="stop-color:#0A8F8F"/></linearGradient>
-    </defs>
-    <rect x="4" y="8" width="44" height="36" rx="10" fill="url(#g1)"/>
-    <circle cx="16" cy="23" r="4" fill="#0B0F1A"/><circle cx="36" cy="23" r="4" fill="#0B0F1A"/>
-    <circle cx="17.5" cy="21.5" r="1.5" fill="#1EC8C8"/><circle cx="37.5" cy="21.5" r="1.5" fill="#1EC8C8"/>
-    <rect x="14" y="31" width="24" height="4" rx="2" fill="#0B0F1A" opacity="0.6"/>
-    <line x1="26" y1="8" x2="26" y2="2" stroke="#E8A838" stroke-width="2.5" stroke-linecap="round"/>
-    <circle cx="26" cy="1" r="2.5" fill="url(#g2)"/>
-    <polygon points="18,44 10,52 28,44" fill="url(#g1)"/>
-    <text x="58" y="38" font-family="Cairo,Arial,sans-serif" font-weight="900" font-size="28" fill="url(#g1)">Bot</text>
-    <text x="107" y="38" font-family="Cairo,Arial,sans-serif" font-weight="900" font-size="28" fill="url(#g2)">ly</text>
-  </svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 210" style="height:44px;width:auto">
+<defs>
+  <style>
+    .wqp-s{animation:wqpP 3s ease-in-out infinite}
+    .wqp-w{animation:wqpF 1s ease-out forwards}
+    .wqp-a{animation:wqpS 1.2s .6s ease-out forwards;opacity:0}
+    .wqp-t{animation:wqpR 1.4s .8s ease-out forwards;opacity:0}
+    .wqp-l{animation:wqpS 1s 1.4s ease-out forwards;opacity:0}
+    .wqp-r{animation:wqpRot 10s linear infinite;transform-origin:93px 83px}
+    .wqp-b1{animation:wqpB .5s 1.2s ease-out forwards;opacity:0}
+    .wqp-b2{animation:wqpB .5s 1.5s ease-out forwards;opacity:0}
+    .wqp-d1{animation:wqpD 1.5s 2s ease-in-out infinite}
+    .wqp-d2{animation:wqpD 1.5s 2.2s ease-in-out infinite}
+    .wqp-d3{animation:wqpD 1.5s 2.4s ease-in-out infinite}
+    @keyframes wqpP{0%,100%{filter:drop-shadow(0 0 4px rgba(232,168,56,.4))}50%{filter:drop-shadow(0 0 14px rgba(232,168,56,.8))}}
+    @keyframes wqpF{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+    @keyframes wqpS{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes wqpR{from{opacity:0;letter-spacing:10px}to{opacity:1;letter-spacing:3px}}
+    @keyframes wqpRot{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+    @keyframes wqpB{0%{opacity:0;transform:scale(0)}70%{transform:scale(1.1)}100%{opacity:1;transform:scale(1)}}
+    @keyframes wqpD{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-2px)}}
+  </style>
+  <linearGradient id="wqpG" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" style="stop-color:#C4892A"/><stop offset="100%" style="stop-color:#F5C96A"/>
+  </linearGradient>
+  <linearGradient id="wqpS2" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" style="stop-color:#1A2035"/><stop offset="100%" style="stop-color:#0B0F1A"/>
+  </linearGradient>
+</defs>
+<g class="wqp-s" transform="translate(26,12)">
+  <circle class="wqp-r" cx="67" cy="71" r="60" fill="none" stroke="#1EC8C8" stroke-width="0.5" stroke-dasharray="8 6" opacity="0.25"/>
+  <path d="M67 0 L124 23 L124 82 Q124 122 67 137 Q10 122 10 82 L10 23 Z" fill="url(#wqpS2)"/>
+  <path d="M67 0 L124 23 L124 82 Q124 122 67 137 Q10 122 10 82 L10 23 Z" fill="none" stroke="url(#wqpG)" stroke-width="1.8"/>
+  <text class="wqp-w" x="67" y="73" text-anchor="middle" font-family="Georgia,serif" font-size="44" font-weight="700" fill="url(#wqpG)">W</text>
+  <text class="wqp-a" x="67" y="101" text-anchor="middle" font-family="Cairo,Arial,sans-serif" font-size="13" font-weight="700" fill="#1EC8C8">وثيق</text>
+</g>
+<text class="wqp-t" x="175" y="68" font-family="Georgia,serif" font-size="46" font-weight="700" fill="url(#wqpG)">WATHIQ</text>
+<g transform="translate(175,80)">
+  <g class="wqp-b1">
+    <rect x="0" y="0" width="54" height="22" rx="11" fill="#1A2035" stroke="#E8A838" stroke-width="1.2"/>
+    <polygon points="8,22 4,30 18,22" fill="#1A2035" stroke="#E8A838" stroke-width="1"/>
+    <circle class="wqp-d1" cx="18" cy="11" r="2.5" fill="#E8A838"/>
+    <circle class="wqp-d2" cx="27" cy="11" r="2.5" fill="#E8A838"/>
+    <circle class="wqp-d3" cx="36" cy="11" r="2.5" fill="#E8A838"/>
+  </g>
+  <g class="wqp-b2">
+    <rect x="62" y="12" width="44" height="18" rx="9" fill="#1EC8C8" opacity="0.9"/>
+    <polygon points="98,30 102,36 88,30" fill="#1EC8C8" opacity="0.9"/>
+    <line x1="70" y1="19" x2="97" y2="19" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    <line x1="70" y1="25" x2="90" y2="25" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  </g>
+</g>
+<text class="wqp-l" x="175" y="150" font-family="Cairo,Arial,sans-serif" font-size="13" fill="#1EC8C8">للبوتات الذكية</text>
+</svg>
   <div style="font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:6px">🔒 دفع آمن</div>
 </nav>
 
@@ -290,7 +329,7 @@ input::placeholder { color: rgba(138,149,176,0.45); }
 
     <!-- Plan Selector -->
     <div class="plan-selector" id="planSelector">
-      <label class="plan-option selected" onclick="selectPlan(this, 'الأساسية', 40)">
+      <label class="plan-option selected" onclick="selectPlan(this, 'الأساسية', 999)">
         <input type="radio" name="plan" checked>
         <div class="plan-left">
           <div class="plan-dot"></div>
@@ -299,10 +338,10 @@ input::placeholder { color: rgba(138,149,176,0.45); }
             <div class="plan-desc">بوت بسيط · تسليم 3 أيام</div>
           </div>
         </div>
-        <div class="plan-price-tag">$40</div>
+        <div class="plan-price-tag">999 ر.س</div>
       </label>
 
-      <label class="plan-option" onclick="selectPlan(this, 'الاحترافية', 100)">
+      <label class="plan-option" onclick="selectPlan(this, 'الاحترافية', 1999)">
         <input type="radio" name="plan">
         <div class="plan-left">
           <div class="plan-dot"></div>
@@ -311,10 +350,10 @@ input::placeholder { color: rgba(138,149,176,0.45); }
             <div class="plan-desc">Google Sheets + طلبات · 5 أيام</div>
           </div>
         </div>
-        <div class="plan-price-tag">$100</div>
+        <div class="plan-price-tag">1,999 ر.س</div>
       </label>
 
-      <label class="plan-option" onclick="selectPlan(this, 'المتقدمة', 250)">
+      <label class="plan-option" onclick="selectPlan(this, 'المتقدمة', 3499)">
         <input type="radio" name="plan">
         <div class="plan-left">
           <div class="plan-dot"></div>
@@ -323,7 +362,7 @@ input::placeholder { color: rgba(138,149,176,0.45); }
             <div class="plan-desc">لوحة تحكم كاملة · 7 أيام</div>
           </div>
         </div>
-        <div class="plan-price-tag">$250</div>
+        <div class="plan-price-tag">3,499 ر.س</div>
       </label>
     </div>
 
@@ -342,13 +381,13 @@ input::placeholder { color: rgba(138,149,176,0.45); }
       <div class="order-row"><span>الدعم</span><span>7 أيام مجاناً</span></div>
       <div class="order-row total">
         <span>الإجمالي</span>
-        <span id="totalAmount">$40</span>
+        <span id="totalAmount">999 ر.س</span>
       </div>
     </div>
 
     <!-- Guarantee -->
     <div class="guarantee">
-      🛡️ ضمان استرداد كامل خلال 24 ساعة إذا لم نبدأ العمل
+      🛡️ ضمان استرداد كامل خلال 24 ساعة إذا لم نبدأ العمل 🇸🇦
     </div>
   </div>
 
@@ -410,14 +449,14 @@ input::placeholder { color: rgba(138,149,176,0.45); }
 </div>
 
 <!-- Moyasar JS -->
-<script src="https://cdn.moyasar.com/mpf/1.14.0/moyasar.js"></script>
+<script src="https://cdn.moyasar.com/mpf/1.14.0/moyasar.js" crossorigin="anonymous"></script>
 
 <script>
 // ══════════════════════════════
 //  STATE
 // ══════════════════════════════
 let selectedPlan = 'الأساسية';
-let selectedAmount = 40; // USD
+let selectedAmount = 999; // USD
 
 const MOYASAR_PK = 'pk_test_d3S5knAFcU41nsXEwgv3yc61M1NEE8R1T6kpvYFU';
 
@@ -438,7 +477,7 @@ function selectPlan(el, name, amount) {
   selectedAmount = amount;
 
   document.getElementById('planName').textContent    = name;
-  document.getElementById('totalAmount').textContent = '$' + amount;
+  document.getElementById('totalAmount').textContent = 'ريال ' + amount;
 
   // Update features
   const featsEl = document.getElementById('planFeatures');
@@ -457,14 +496,14 @@ function initMoyasar() {
   document.getElementById('moyasar-form').innerHTML = '';
 
   // Convert USD to SAR (approx 3.75)
-  const amountSAR  = selectedAmount * 3.75;
-  const amountHalala = Math.round(amountSAR * 100); // Moyasar uses smallest unit
+  const amountSAR  = selectedAmount; // بالريال مباشرة
+  const amountHalala = Math.round(amountSAR * 100); // الريال → هللة
 
   Moyasar.init({
     element: '.mysr-form',
     amount:  amountHalala,
     currency: 'SAR',
-    description: `WATHIQ — باقة ${selectedPlan}`,
+    description: `WATHIQ — باقة ${selectedPlan} (${selectedAmount} ريال)`,
     publishable_api_key: MOYASAR_PK,
     callback_url: window.location.href + '?status=paid',
     methods: ['creditcard', 'stcpay', 'applepay'],
@@ -489,7 +528,7 @@ function handlePaymentSuccess(payment) {
   const name = document.getElementById('custFirst').value + ' ' + document.getElementById('custLast').value;
 
   document.getElementById('successPlan').textContent   = selectedPlan;
-  document.getElementById('successAmount').textContent = '$' + selectedAmount + ' (SAR ' + (selectedAmount * 3.75).toFixed(2) + ')';
+  document.getElementById('successAmount').textContent = 'ريال ' + selectedAmount;
   document.getElementById('successRef').textContent    = payment.id || 'TEST-' + Date.now();
 
   document.getElementById('paymentPage').style.display  = 'none';
